@@ -2,67 +2,78 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Molongi Vault - Private</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Molongi Records</title>
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8ab8be">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-body{background: radial-gradient(120% 120% at 50% 10%, #ff9a2e 0%, #b85a00 45%, #2a1200 100%);min-height:100vh;color:white;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20px 0}
-#lockScreen{position:fixed;inset:0;z-index:9999;background: radial-gradient(120% 120% at 50% 0%, #1e3d2a 0%, #0f2218 50%, #070f0a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;transition:transform 0.7s, opacity 0.5s}
+body{min-height:100vh;overflow:hidden}
+#lockScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#8ec2c5 0%,#7fb2b6 50%,#8bbfc3 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:transform 0.7s,opacity 0.5s}
 #lockScreen.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
-.lock-logo{width:100px;height:100px;background:linear-gradient(135deg,#2a7a5a,#1a4a3a);border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:900;color:white;box-shadow:0 20px 60px rgba(0,0,0,0.6);margin-bottom:20px}
-.lock-logo img{width:70%;object-fit:contain}
-.lock-title{font-size:26px;font-weight:700;margin-bottom:6px}
-.lock-sub{font-size:13px;opacity:0.5;margin-bottom:36px}
-.lock-input-wrap{width:100%;max-width:300px;position:relative}
-.lock-input-wrap input{width:100%;padding:16px 50px 16px 18px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);color:white;font-size:15px;outline:none;text-align:center}
-.lock-btn{position:absolute;right:5px;top:5px;width:42px;height:42px;border-radius:50%;border:none;background:white;color:#0f2218;font-size:18px;cursor:pointer}
-.lock-error{margin-top:16px;color:#ff6b6b;font-size:13px;opacity:0;transition:0.3s;height:20px}
+.lock-card{width:100%;max-width:340px;background:rgba(255,255,255,0.32);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:24px;padding:32px 24px 26px;display:flex;flex-direction:column;align-items:center;box-shadow:0 20px 60px rgba(0,0,0,0.12),inset 0 1px 0 rgba(255,255,255,0.6)}
+.lock-logo{width:66px;height:66px;background:white;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#5a9aa0;margin-bottom:18px}
+.lock-title{font-size:20px;font-weight:800;color:#1d4a4e;margin-bottom:4px;text-align:center}
+.lock-sub{font-size:11px;color:#2f6368;opacity:0.7;margin-bottom:24px}
+.lock-input{width:100%;padding:13px 18px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);background:rgba(255,255,255,0.45);color:#1d4a4e;font-size:14px;text-align:center;outline:none}
+.lock-input::placeholder{color:#3a666a;opacity:0.6}
+.lock-btn{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:none;background:white;color:#5a9aa0;font-weight:600;font-size:14px;cursor:pointer}
+.lock-error{margin-top:12px;color:#a33;font-size:12px;height:16px;opacity:0;transition:0.3s}
 .lock-error.show{opacity:1}
+#playerScreen{min-height:100vh;background:radial-gradient(120% 120% at 50% 10%,#ff9a2e 0%,#b85a00 45%,#2a1200 100%);color:white;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20px 0;opacity:0;transition:opacity 0.5s}
+#playerScreen.show{opacity:1}
 .header{width:92%;max-width:500px;display:flex;justify-content:space-between;align-items:center;padding:10px 0}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700}
-.logo-icon{width:36px;height:36px;background:#2a7a7a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900}
+.logo-icon{width:36px;height:36px;background:#2a7a7a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:white}
 .cover-flow{position:relative;width:100%;height:52vh;max-height:420px;display:flex;align-items:center;justify-content:center;perspective:1000px;margin:20px 0}
 .card{position:absolute;width:220px;height:300px;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);transition:all 0.6s;cursor:pointer;border:1px solid rgba(255,255,255,0.15)}
 .card img{width:100%;height:100%;object-fit:cover}
-.card-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent, rgba(0,0,0,0.9));padding:14px 12px}
-.card.active{transform: translateX(0) translateZ(80px) scale(1.15);z-index:10}
-.card.prev1{transform: translateX(-140px) translateZ(-20px) rotateY(25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
-.card.next1{transform: translateX(140px) translateZ(-20px) rotateY(-25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
+.card-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.9));padding:14px 12px}
+.card.active{transform:translateX(0) translateZ(80px) scale(1.15);z-index:10}
+.card.prev1{transform:translateX(-140px) translateZ(-20px) rotateY(25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
+.card.next1{transform:translateX(140px) translateZ(-20px) rotateY(-25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
 .player-bar{width:92%;max-width:600px;background:rgba(255,255,255,0.12);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.18);border-radius:100px;padding:10px 18px;display:flex;align-items:center;gap:14px}
-.controls{display:flex;gap:12px}.ctrl-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer}
+.ctrl-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer}
 .now-playing{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .now-playing img{width:42px;height:42px;border-radius:8px;object-fit:cover}
-.np-text{flex:1;min-width:0}.np-text h4{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.np-text{flex:1;min-width:0}.np-text h4{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .progress{width:100%;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;margin-top:4px;overflow:hidden}
 .progress-fill{height:100%;background:white;width:0%}
 </style>
 </head>
 <body>
 <div id="lockScreen">
-<div class="lock-logo"><img src="138817.png" onerror="this.parentElement.textContent='M'"></div>
-<div class="lock-title">MOLONGI VAULT</div>
-<div class="lock-sub">PRIVATE ACCESS</div>
-<div class="lock-input-wrap">
-<input id="passInput" type="password" placeholder="Mot de passe" onkeypress="if(event.key==='Enter')checkPass()">
-<button class="lock-btn" onclick="checkPass()">→</button>
+  <div class="lock-card">
+    <div class="lock-logo">M</div>
+    <div class="lock-title">MOLONGI RECORDS</div>
+    <div class="lock-sub">Vault V • Privé</div>
+    <input id="passInput" class="lock-input" type="password" placeholder="Code d'accès" onkeypress="if(event.key==='Enter')checkPass()">
+    <button class="lock-btn" onclick="checkPass()">Entrer</button>
+    <div class="lock-error" id="lockError">Code incorrect</div>
+  </div>
 </div>
-<div class="lock-error" id="lockError">Mot de passe incorrect</div>
-</div>
-<div class="header"><div class="logo"><div class="logo-icon">M</div><span>MOLONGI VAULT</span></div></div>
+<div id="playerScreen">
+<div class="header"><div class="logo"><div class="logo-icon">M</div><span>MOLONGI RECORDS</span></div><div>Vault</div></div>
 <div class="cover-flow" id="coverFlow"></div>
 <div class="player-bar">
 <div class="controls"><button class="ctrl-btn" onclick="prev()">⏮</button><button class="ctrl-btn" id="playBtn" onclick="togglePlay()">⏸</button><button class="ctrl-btn" onclick="next()">⏭</button></div>
 <div class="now-playing"><img id="npImg" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200"><div class="np-text"><h4 id="npTitle">SIMPLICITÉ - Afro</h4><p id="npArtist">By Molongi</p><div class="progress"><div class="progress-fill" id="prog"></div></div></div></div>
 </div>
+</div>
 <audio id="audio" src="simplicite-afro-01.mp3"></audio>
 <script>
 function checkPass(){
-const v=document.getElementById('passInput').value;
-const err=document.getElementById('lockError');
-if(v==='molongi2026'){document.getElementById('lockScreen').classList.add('hide');document.getElementById('audio').play().catch(()=>{})}
-else{err.classList.add('show');setTimeout(()=>err.classList.remove('show'),2000)}
+  const v=document.getElementById('passInput').value;
+  const err=document.getElementById('lockError');
+  if(v==='molongi2026'){
+    document.getElementById('lockScreen').classList.add('hide');
+    document.getElementById('playerScreen').classList.add('show');
+    setTimeout(()=>{document.getElementById('audio').play().catch(()=>{})},600);
+  }else{
+    err.classList.add('show');
+    setTimeout(()=>err.classList.remove('show'),2000);
+  }
 }
 const tracks=[
 {title:"SIMPLICITÉ - Afro",artist:"By Molongi • 01",cover:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",src:"simplicite-afro-01.mp3"},
