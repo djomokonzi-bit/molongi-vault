@@ -1,0 +1,16 @@
+{
+  "name": "Molongi Records Vault V",
+  "short_name": "Molongi Vault",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FF4D4D",
+  "icons": [
+    {
+      "src": "138817.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
