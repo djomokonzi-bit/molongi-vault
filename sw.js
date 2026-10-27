@@ -1,19 +1,32 @@
-const CACHE_NAME = "molongi-v1";
-const urlsToCache = ["/", "/index.html", "/manifest.json", "/icon-512.png"];
+const CACHE = "molongi-records-v2";
+const FILES = [
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./simplicite-afro-01.mp3",
+  "./138817.png"
+];
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+self.addEventListener("install", e => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(FILES))
   );
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+self.addEventListener("activate", e => {
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+  );
 });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
+self.addEventListener("fetch", e => {
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if(cached) return cached;
+      return fetch(e.request).then(res => {
+        return res;
+      }).catch(()=>caches.match("./index.html"));
+    })
   );
 });
