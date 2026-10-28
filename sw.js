@@ -7,6 +7,7 @@ self.addEventListener("install", e => {
     "./manifest.json",
     "./icon-192.png",
     "./icon-512.png",
+    "./ma-photo.jpg",
     "./simplicite-afro-01.mp3"
   ])));
 });
