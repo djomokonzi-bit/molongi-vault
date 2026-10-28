@@ -2,11 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Molongi Records</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#8ab8be">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
@@ -14,6 +13,7 @@ body{min-height:100vh;overflow:hidden}
 #lockScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#8ec2c5 0%,#7fb2b6 50%,#8bbfc3 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:transform 0.7s,opacity 0.5s}
 #lockScreen.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
 .lock-card{width:100%;max-width:340px;background:rgba(255,255,255,0.32);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:24px;padding:32px 24px 26px;display:flex;flex-direction:column;align-items:center}
+.lock-logo{width:78px;height:78px;border-radius:20px;background:white;color:#5a9aa0;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 4px 15px rgba(0,0,0,0.15)}
 .lock-logo-img{width:78px;height:78px;border-radius:20px;object-fit:cover;border:3px solid white;box-shadow:0 4px 15px rgba(0,0,0,0.15);margin-bottom:18px}
 .lock-title{font-size:20px;font-weight:800;color:#1d4a4e;margin-bottom:4px}
 .lock-sub{font-size:11px;color:#2f6368;opacity:0.7;margin-bottom:24px}
@@ -58,7 +58,14 @@ body{min-height:100vh;overflow:hidden}
 </style>
 </head>
 <body>
-<div id="lockScreen"><div class="lock-card"><img src="ma-photo.jpg" class="lock-logo-img" alt="Molongi"><div class="lock-title">MOLONGI RECORDS</div><div class="lock-sub">Vault V • Privé</div><input id="passInput" class="lock-input" type="password" placeholder="Code d'accès" onkeypress="if(event.key==='Enter')checkPass()"><button class="lock-btn" onclick="checkPass()">Entrer</button><div class="lock-error" id="lockError">Code incorrect</div></div></div>
+<div id="lockScreen"><div class="lock-card">
+<div class="lock-logo">M</div>
+<img src="ma-photo.jpg" class="lock-logo-img" alt="Molongi">
+<div class="lock-title">MOLONGI RECORDS</div><div class="lock-sub">Vault V • Privé</div>
+<input id="passInput" class="lock-input" type="password" placeholder="Code d'accès" onkeypress="if(event.key==='Enter')checkPass()">
+<button class="lock-btn" onclick="checkPass()">Entrer</button>
+<div class="lock-error" id="lockError">Code incorrect</div>
+</div></div>
 <div id="playerScreen">
 <div class="header"><div class="logo"><img src="ma-photo.jpg" class="logo-icon-img" alt="M"><span>MOLONGI RECORDS</span></div><div class="top-tools"><button class="tool-btn" onclick="toggleSearch()">🔍</button><button class="tool-btn" onclick="toggleEq()"><div class="eq-bars" id="eqBars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></button></div></div>
 <div class="search-box" id="searchBox"><input id="search" placeholder="Rechercher une chanson..." oninput="filterTracks()"></div>
@@ -93,7 +100,7 @@ function prev(){current=(current-1+filtered.length)%filtered.length;updatePlayer
 function filterTracks(){const q=document.getElementById('search').value.toLowerCase();filtered=tracks.filter(t=>t.title.toLowerCase().includes(q));current=0;if(filtered.length>0){updatePlayer();render();}}
 const audio=document.getElementById('audio');audio.addEventListener('timeupdate',()=>{if(audio.duration)document.getElementById('prog').style.width=(audio.currentTime/audio.duration*100)+'%'});audio.addEventListener('ended',()=>next());
 render();
-if('serviceWorker' in navigator){window.addEventListener('load', ()=>{navigator.serviceWorker.register('./sw.js').then(()=>console.log('Offline ready')).catch(()=>{});});}
+if('serviceWorker' in navigator){window.addEventListener('load', ()=>{navigator.serviceWorker.register('./sw.js');});}
 </script>
 </body>
 </html>
