@@ -1,101 +1,26 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Molongi Records</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#8ab8be">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-body{min-height:100vh;overflow:hidden;background:#8ec2c5}
-#lockScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#8ec2c5 0%,#7fb2b6 50%,#8bbfc3 100%);display:flex;align-items:center;justify-content:center;padding:20px;transition:transform 0.7s,opacity 0.5s}
-#lockScreen.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
-.lock-card{width:100%;max-width:340px;background:rgba(255,255,255,0.32);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);border-radius:24px;padding:32px 24px 26px;display:flex;flex-direction:column;align-items:center}
-.lock-logo{width:78px;height:78px;border-radius:20px;background:white;color:#5a9aa0;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 4px 15px rgba(0,0,0,0.15)}
-.lock-logo-img{width:78px;height:78px;border-radius:20px;object-fit:cover;border:3px solid white;box-shadow:0 4px 15px rgba(0,0,0,0.15);margin-bottom:18px}
-.lock-title{font-size:20px;font-weight:800;color:#1d4a4e;margin-bottom:4px}
-.lock-sub{font-size:11px;color:#2f6368;opacity:0.7;margin-bottom:24px}
-.lock-input{width:100%;padding:13px 18px;border-radius:12px;border:1px solid rgba(0,0,0,0.08);background:rgba(255,255,255,0.45);color:#1d4a4e;font-size:14px;text-align:center;outline:none}
-.lock-btn{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:none;background:white;color:#5a9aa0;font-weight:600;font-size:14px;cursor:pointer}
-.lock-error{margin-top:12px;color:#a33;font-size:12px;height:16px;opacity:0;transition:0.3s}.lock-error.show{opacity:1}
-#playerScreen{min-height:100vh;background:radial-gradient(120% 120% at 50% 10%,#ff9a2e 0%,#b85a00 45%,#2a1200 100%);color:white;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:16px 0 12px;opacity:0;pointer-events:none;transition:opacity 0.5s}
-#playerScreen.show{opacity:1;pointer-events:auto}
-.header{width:92%;max-width:600px;display:flex;justify-content:space-between;align-items:center;padding:8px 0}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700}
-.logo-icon-img{width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.3)}
-.tool-btn{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);color:white;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.cover-flow{position:relative;width:100%;height:38vh;max-height:320px;display:flex;align-items:center;justify-content:center;perspective:1000px;margin:6px 0}
-.card{position:absolute;width:200px;height:260px;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);transition:all 0.6s;cursor:pointer;border:1px solid rgba(255,255,255,0.15);background:#111}
-.card img{width:100%;height:100%;object-fit:cover}
-.card-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.9));padding:12px}
-.card.active{transform:translateX(0) translateZ(80px) scale(1.1);z-index:10}
-.card.prev1{transform:translateX(-125px) translateZ(-20px) rotateY(25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
-.card.next1{transform:translateX(125px) translateZ(-20px) rotateY(-25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
-#freqCanvas{display:block;width:92%;max-width:600px;height:80px;background:rgba(0,0,0,0.28);backdrop-filter:blur(12px);border-radius:16px;border:1px solid rgba(255,255,255,0.12);margin:8px auto}
-.player-bar{width:96%;max-width:640px;background:rgba(255,255,255,0.14);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
-.player-row{display:flex;align-items:center;gap:10px}
-.ctrl-btn{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.ctrl-btn.play{width:38px;height:38px;background:white;color:#7a3a00;font-size:16px}
-.now-playing{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.now-playing img{width:40px;height:40px;border-radius:8px;object-fit:cover}
-.progress{width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;cursor:pointer}
-.progress-fill{height:100%;background:white;width:0%}
-.volume-row{display:flex;align-items:center;gap:8px;padding:0 4px}
-.vol-slider{flex:1;height:4px;-webkit-appearance:none;background:rgba(255,255,255,0.2);border-radius:2px;outline:none}
-.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:white;cursor:pointer}
-.eq-bars{display:flex;align-items:end;gap:2px;height:14px}.eq-bar{width:3px;background:white;border-radius:2px;animation:eq 0.5s infinite alternate}
-@keyframes eq{from{height:4px}to{height:14px}}
-.eq-bars.paused .eq-bar{animation:none;height:4px;opacity:0.5}
-</style>
-</head>
-<body>
-<div id="lockScreen"><div class="lock-card">
-<div class="lock-logo">M</div>
-<img src="ma-photo.jpg?v=10" class="lock-logo-img" alt="Molongi">
-<div class="lock-title">MOLONGI RECORDS</div><div class="lock-sub">Vault V • Privé</div>
-<input id="passInput" class="lock-input" type="password" placeholder="Code d'accès" onkeypress="if(event.key==='Enter')checkPass()">
-<button class="lock-btn" onclick="checkPass()">Entrer</button>
-<div class="lock-error" id="lockError">Code incorrect</div>
-</div></div>
-
-<div id="playerScreen">
-<div class="header"><div class="logo"><img src="ma-photo.jpg?v=10" class="logo-icon-img"><span>MOLONGI RECORDS</span></div><div class="tool-btn" onclick="toggleEq()"><div class="eq-bars" id="eqBars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div></div>
-<div class="cover-flow" id="coverFlow"></div>
-<canvas id="freqCanvas"></canvas>
-<div class="player-bar">
-<div class="player-row">
-<div style="display:flex;gap:8px"><button class="ctrl-btn" onclick="prev()">⏮</button><button class="ctrl-btn play" id="playBtn" onclick="togglePlay()">▶</button><button class="ctrl-btn" onclick="next()">⏭</button></div>
-<div class="now-playing"><img id="npImg" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200"><div style="flex:1;min-width:0"><h4 id="npTitle" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">SIMPLICITÉ - Afro</h4><p style="font-size:10px;opacity:0.7">By Molongi</p></div></div>
-<button class="tool-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
-</div>
-<div class="progress" onclick="seek(event)"><div class="progress-fill" id="prog"></div></div>
-<div class="volume-row"><button class="tool-btn" onclick="changeVol(-0.1)">−</button><input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="0.35" oninput="setVol(this.value)"><button class="tool-btn" onclick="changeVol(0.1)">+</button><span style="font-size:10px;opacity:0.6;min-width:32px;text-align:right" id="volText">35%</span></div>
-</div>
-</div>
-
-<audio id="audio" src="simplicite-afro-01.mp3" crossorigin="anonymous" preload="auto"></audio>
-<script>
-function checkPass(){const v=document.getElementById('passInput').value;const err=document.getElementById('lockError');if(v==='molongi2026'){document.getElementById('lockScreen').classList.add('hide');document.getElementById('playerScreen').classList.add('show');setTimeout(()=>{const a=document.getElementById('audio');a.volume=0.35;a.play().catch(()=>{});document.getElementById('playBtn').textContent='⏸';initVisualizer();},600);}else{err.classList.add('show');setTimeout(()=>err.classList.remove('show'),2000);}}
-function toggleEq(){const eq=document.getElementById('eqBars');eq.classList.toggle('paused');const a=document.getElementById('audio');if(eq.classList.contains('paused')){a.pause();document.getElementById('playBtn').textContent='▶'}else{a.play();document.getElementById('playBtn').textContent='⏸';initVisualizer()}}
-function toggleMute(){const a=document.getElementById('audio');a.muted=!a.muted;document.getElementById('muteBtn').textContent=a.muted?'🔇':'🔊';}
-function setVol(v){const a=document.getElementById('audio');a.volume=parseFloat(v);a.muted=false;document.getElementById('muteBtn').textContent='🔊';document.getElementById('volText').textContent=Math.round(v*100)+'%';document.getElementById('volSlider').value=v;}
-function changeVol(d){const s=document.getElementById('volSlider');let v=Math.min(1,Math.max(0,parseFloat(s.value)+d));s.value=v;setVol(v);}
-function seek(e){const rect=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-rect.left)/rect.width;const a=document.getElementById('audio');if(a.duration)a.currentTime=pct*a.duration;}
-const tracks=[{title:"SIMPLICITÉ - Afro",artist:"By Molongi • 01",cover:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",src:"simplicite-afro-01.mp3"},{title:"FREESTYLE KINSHASA",artist:"By Molongi",cover:"https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=500",src:"simplicite-afro-01.mp3"},{title:"AFRO DRILL BEAT",artist:"Beat • 2026",cover:"https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500",src:"simplicite-afro-01.mp3"}];
-let current=0;function render(){const f=document.getElementById('coverFlow');f.innerHTML='';tracks.forEach((t,i)=>{const d=document.createElement('div');let c='card';if(i===current)c+=' active';else if(i===current-1)c+=' prev1';else if(i===current+1)c+=' next1';else{d.style.display='none'}d.className=c;d.innerHTML=`<img src="${t.cover}"><div class="card-info"><h3 style="font-size:13px">${t.title}</h3><p style="font-size:10px;opacity:0.7">${t.artist}</p></div>`;d.onclick=()=>{current=i;updatePlayer();render();play()};f.appendChild(d)})}
-function updatePlayer(){document.getElementById('npTitle').textContent=tracks[current].title;document.getElementById('npImg').src=tracks[current].cover;document.getElementById('audio').src=tracks[current].src;}
-function togglePlay(){const a=document.getElementById('audio');const eq=document.getElementById('eqBars');if(a.paused){a.play();document.getElementById('playBtn').textContent='⏸';eq.classList.remove('paused');initVisualizer()}else{a.pause();document.getElementById('playBtn').textContent='▶';eq.classList.add('paused')}}
-function play(){const a=document.getElementById('audio');a.play().catch(()=>{});document.getElementById('playBtn').textContent='⏸';document.getElementById('eqBars').classList.remove('paused');initVisualizer()}
-function next(){current=(current+1)%tracks.length;updatePlayer();render();play()}
-function prev(){current=(current-1+tracks.length)%tracks.length;updatePlayer();render();play()}
-const audioEl=document.getElementById('audio');audioEl.addEventListener('timeupdate',()=>{if(audioEl.duration)document.getElementById('prog').style.width=(audioEl.currentTime/audioEl.duration*100)+'%'});audioEl.addEventListener('ended',()=>next());
-render();
-// FREQ VISUALIZER
-const canvas=document.getElementById('freqCanvas');const ctx=canvas.getContext('2d');let audioCtx,analyser,source,dataArray;
-function initVisualizer(){if(audioCtx)return;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=128;source=audioCtx.createMediaElementSource(audioEl);source.connect(analyser);analyser.connect(audioCtx.destination);dataArray=new Uint8Array(analyser.frequencyBinCount);canvas.width=canvas.offsetWidth*2;canvas.height=160;drawFreq();}catch(e){console.log('Visualizer error',e)}}
-function drawFreq(){requestAnimationFrame(drawFreq);if(!analyser)return;analyser.getByteFrequencyData(dataArray);ctx.clearRect(0,0,canvas.width,canvas.height);const bw=canvas.width/dataArray.length*1.7;let x=0;for(let i=0;i<dataArray.length;i++){const h=dataArray[i]*0.6;const grad=ctx.createLinearGradient(0,canvas.height-h,0,canvas.height);grad.addColorStop(0,'#ffffff');grad.addColorStop(1,'#ff9a2e');ctx.fillStyle=grad;ctx.fillRect(x,canvas.height-h,bw,h);x+=bw+2;}}
-</script>
-</body>
-</html>
+{
+  "name": "Molongi Vault",
+  "short_name": "Molongi",
+  "description": "Vault V Prive Molongi Records",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#8ab8be",
+  "theme_color": "#8ab8be",
+  "id": "molongi-vault-v",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
