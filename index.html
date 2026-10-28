@@ -33,7 +33,7 @@ body{min-height:100vh;overflow:hidden;background:#8ec2c5}
 .card.active{transform:translateX(0) translateZ(80px) scale(1.1);z-index:10}
 .card.prev1{transform:translateX(-125px) translateZ(-20px) rotateY(25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
 .card.next1{transform:translateX(125px) translateZ(-20px) rotateY(-25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
-#freqCanvas{display:block;width:92%;max-width:600px;height:80px;background:rgba(0,0,0,0.28);backdrop-filter:blur(12px);border-radius:16px;border:1px solid rgba(255,255,255,0.12);margin:8px auto}
+#freqCanvas{display:block;width:92%;max-width:600px;height:80px;background:rgba(0,0,0,0.45);backdrop-filter:blur(12px);border-radius:16px;border:1px solid rgba(255,255,255,0.15);margin:8px auto}
 .player-bar{width:96%;max-width:640px;background:rgba(255,255,255,0.14);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.18);border-radius:24px;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
 .player-row{display:flex;align-items:center;gap:10px}
 .ctrl-btn{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -53,15 +53,14 @@ body{min-height:100vh;overflow:hidden;background:#8ec2c5}
 <body>
 <div id="lockScreen"><div class="lock-card">
 <div class="lock-logo">M</div>
-<img src="ma-photo.jpg?v=10" class="lock-logo-img" alt="Molongi">
+<img src="ma-photo.jpg?v=12" class="lock-logo-img" alt="Molongi">
 <div class="lock-title">MOLONGI RECORDS</div><div class="lock-sub">Vault V • Privé</div>
 <input id="passInput" class="lock-input" type="password" placeholder="Code d'accès" onkeypress="if(event.key==='Enter')checkPass()">
 <button class="lock-btn" onclick="checkPass()">Entrer</button>
 <div class="lock-error" id="lockError">Code incorrect</div>
 </div></div>
-
 <div id="playerScreen">
-<div class="header"><div class="logo"><img src="ma-photo.jpg?v=10" class="logo-icon-img"><span>MOLONGI RECORDS</span></div><div class="tool-btn" onclick="toggleEq()"><div class="eq-bars" id="eqBars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div></div>
+<div class="header"><div class="logo"><img src="ma-photo.jpg?v=12" class="logo-icon-img"><span>MOLONGI RECORDS</span></div><div class="tool-btn" onclick="toggleEq()"><div class="eq-bars" id="eqBars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div></div>
 <div class="cover-flow" id="coverFlow"></div>
 <canvas id="freqCanvas"></canvas>
 <div class="player-bar">
@@ -74,7 +73,6 @@ body{min-height:100vh;overflow:hidden;background:#8ec2c5}
 <div class="volume-row"><button class="tool-btn" onclick="changeVol(-0.1)">−</button><input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="0.35" oninput="setVol(this.value)"><button class="tool-btn" onclick="changeVol(0.1)">+</button><span style="font-size:10px;opacity:0.6;min-width:32px;text-align:right" id="volText">35%</span></div>
 </div>
 </div>
-
 <audio id="audio" src="simplicite-afro-01.mp3" crossorigin="anonymous" preload="auto"></audio>
 <script>
 function checkPass(){const v=document.getElementById('passInput').value;const err=document.getElementById('lockError');if(v==='molongi2026'){document.getElementById('lockScreen').classList.add('hide');document.getElementById('playerScreen').classList.add('show');setTimeout(()=>{const a=document.getElementById('audio');a.volume=0.35;a.play().catch(()=>{});document.getElementById('playBtn').textContent='⏸';initVisualizer();},600);}else{err.classList.add('show');setTimeout(()=>err.classList.remove('show'),2000);}}
@@ -92,10 +90,14 @@ function next(){current=(current+1)%tracks.length;updatePlayer();render();play()
 function prev(){current=(current-1+tracks.length)%tracks.length;updatePlayer();render();play()}
 const audioEl=document.getElementById('audio');audioEl.addEventListener('timeupdate',()=>{if(audioEl.duration)document.getElementById('prog').style.width=(audioEl.currentTime/audioEl.duration*100)+'%'});audioEl.addEventListener('ended',()=>next());
 render();
-// FREQ VISUALIZER
-const canvas=document.getElementById('freqCanvas');const ctx=canvas.getContext('2d');let audioCtx,analyser,source,dataArray;
-function initVisualizer(){if(audioCtx)return;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=128;source=audioCtx.createMediaElementSource(audioEl);source.connect(analyser);analyser.connect(audioCtx.destination);dataArray=new Uint8Array(analyser.frequencyBinCount);canvas.width=canvas.offsetWidth*2;canvas.height=160;drawFreq();}catch(e){console.log('Visualizer error',e)}}
-function drawFreq(){requestAnimationFrame(drawFreq);if(!analyser)return;analyser.getByteFrequencyData(dataArray);ctx.clearRect(0,0,canvas.width,canvas.height);const bw=canvas.width/dataArray.length*1.7;let x=0;for(let i=0;i<dataArray.length;i++){const h=dataArray[i]*0.6;const grad=ctx.createLinearGradient(0,canvas.height-h,0,canvas.height);grad.addColorStop(0,'#ffffff');grad.addColorStop(1,'#ff9a2e');ctx.fillStyle=grad;ctx.fillRect(x,canvas.height-h,bw,h);x+=bw+2;}}
+const canvas=document.getElementById('freqCanvas');const ctx=canvas.getContext('2d');
+let audioCtx,analyser,source,dataArray;
+let isFakeMode=true;
+function resizeCanvas(){const w = canvas.offsetWidth || 600; canvas.width = w * 2; canvas.height = 160;}
+function drawFakeFreq(){if(!isFakeMode) return; requestAnimationFrame(drawFakeFreq); ctx.clearRect(0,0,canvas.width,canvas.height); const bars = 32; const bw = canvas.width / bars * 0.55; const gap = canvas.width / bars * 0.45; let x=0; for(let i=0;i<bars;i++){ const h = 12 + Math.random()*65 + Math.sin(Date.now()/250 + i*0.8)*18; const grad=ctx.createLinearGradient(0,canvas.height-h,0,canvas.height); grad.addColorStop(0,'#ffffff'); grad.addColorStop(1,'#ff9a2e'); ctx.fillStyle=grad; ctx.fillRect(x,canvas.height-h,bw,h); x+=bw+gap; } }
+function initVisualizer(){resizeCanvas(); if(!audioCtx){ try{ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); analyser=audioCtx.createAnalyser(); analyser.fftSize=128; source=audioCtx.createMediaElementSource(audioEl); source.connect(analyser); analyser.connect(audioCtx.destination); dataArray=new Uint8Array(analyser.frequencyBinCount); }catch(e){ isFakeMode=true; drawFakeFreq(); return; } } if(audioCtx.state==='suspended') audioCtx.resume(); isFakeMode=false; drawRealFreq(); }
+function drawRealFreq(){ if(isFakeMode) return; requestAnimationFrame(drawRealFreq); if(!analyser) return; analyser.getByteFrequencyData(dataArray); ctx.clearRect(0,0,canvas.width,canvas.height); const bw=canvas.width/dataArray.length*1.7; let x=0; for(let i=0;i<dataArray.length;i++){ const h=dataArray[i]*0.55; const grad=ctx.createLinearGradient(0,canvas.height-h,0,canvas.height); grad.addColorStop(0,'#ffffff'); grad.addColorStop(1,'#ff9a2e'); ctx.fillStyle=grad; ctx.fillRect(x,canvas.height-h,bw,h); x+=bw+2; } }
+resizeCanvas(); drawFakeFreq(); window.addEventListener('resize',resizeCanvas);
 </script>
 </body>
 </html>
