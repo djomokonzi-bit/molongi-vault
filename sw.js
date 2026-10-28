@@ -1,4 +1,4 @@
-const CACHE = "molongi-v11";
+const CACHE = "molongi-v12";
 self.addEventListener("install", e => {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(c => c.addAll([
