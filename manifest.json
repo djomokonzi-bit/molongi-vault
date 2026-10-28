@@ -1,15 +1,18 @@
 {
   "name": "Molongi Records",
   "short_name": "Molongi",
-  "start_url": ".",
+  "description": "Molongi Vault Privé",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#a8c5c0",
-  "theme_color": "#2f5e5a",
+  "background_color": "#2a1200",
+  "theme_color": "#8ab8be",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "138817.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/1388/138817.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
