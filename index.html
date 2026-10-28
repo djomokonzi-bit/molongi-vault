@@ -25,13 +25,11 @@ body{min-height:100vh;overflow:hidden;background:#8ec2c5}
 .header{width:92%;max-width:600px;display:flex;justify-content:space-between;align-items:center;padding:8px 0}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700}
 .logo-icon-img{width:38px;height:38px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.3)}
-.top-tools{display:flex;gap:8px}
 .tool-btn{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);color:white;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .cover-flow{position:relative;width:100%;height:48vh;max-height:400px;display:flex;align-items:center;justify-content:center;perspective:1000px;margin:10px 0}
 .card{position:absolute;width:210px;height:280px;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);transition:all 0.6s;cursor:pointer;border:1px solid rgba(255,255,255,0.15);background:#111}
 .card img{width:100%;height:100%;object-fit:cover}
 .card-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.9));padding:12px}
-.card-info h3{font-size:13px}.card-info p{font-size:10px;opacity:0.7}
 .card.active{transform:translateX(0) translateZ(80px) scale(1.12);z-index:10}
 .card.prev1{transform:translateX(-130px) translateZ(-20px) rotateY(25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
 .card.next1{transform:translateX(130px) translateZ(-20px) rotateY(-25deg) scale(0.9);z-index:5;filter:brightness(0.7)}
@@ -41,25 +39,21 @@ body{min-height:100vh;overflow:hidden;background:#8ec2c5}
 .ctrl-btn.play{width:38px;height:38px;background:white;color:#7a3a00;font-size:16px}
 .now-playing{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .now-playing img{width:40px;height:40px;border-radius:8px;object-fit:cover}
-.np-text{flex:1;min-width:0}.np-text h4{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.np-text p{font-size:10px;opacity:0.7}
+.now-playing h4{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .progress{width:100%;height:3px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;cursor:pointer}
 .progress-fill{height:100%;background:white;width:0%}
 .volume-row{display:flex;align-items:center;gap:8px;padding:0 4px}
-.vol-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .vol-slider{flex:1;height:4px;-webkit-appearance:none;background:rgba(255,255,255,0.2);border-radius:2px;outline:none}
 .vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:white;cursor:pointer}
 .eq-bars{display:flex;align-items:end;gap:2px;height:14px}.eq-bar{width:3px;background:white;border-radius:2px;animation:eq 0.5s infinite alternate}
 @keyframes eq{from{height:4px}to{height:14px}}
 .eq-bars.paused .eq-bar{animation:none;height:4px;opacity:0.5}
-.search-box{width:92%;max-width:600px;margin-bottom:8px;display:none}
-.search-box.show{display:block}
-.search-box input{width:100%;padding:11px 16px;border-radius:100px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);color:white;outline:none;font-size:13px}
 </style>
 </head>
 <body>
 <div id="lockScreen"><div class="lock-card">
 <div class="lock-logo">M</div>
-<img src="ma-photo.jpg" class="lock-logo-img" alt="Molongi">
+<img src="ma-photo.jpg?v=7" class="lock-logo-img" alt="Molongi">
 <div class="lock-title">MOLONGI RECORDS</div><div class="lock-sub">Vault V • Privé</div>
 <input id="passInput" class="lock-input" type="password" placeholder="Code d'accès" onkeypress="if(event.key==='Enter')checkPass()">
 <button class="lock-btn" onclick="checkPass()">Entrer</button>
@@ -67,41 +61,37 @@ body{min-height:100vh;overflow:hidden;background:#8ec2c5}
 </div></div>
 
 <div id="playerScreen">
-<div class="header"><div class="logo"><img src="ma-photo.jpg" class="logo-icon-img"><span>MOLONGI RECORDS</span></div><div class="top-tools"><button class="tool-btn" onclick="toggleSearch()">🔍</button><button class="tool-btn" onclick="toggleEq()"><div class="eq-bars" id="eqBars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></button></div></div>
-<div class="search-box" id="searchBox"><input id="search" placeholder="Rechercher..." oninput="filterTracks()"></div>
+<div class="header"><div class="logo"><img src="ma-photo.jpg?v=7" class="logo-icon-img"><span>MOLONGI RECORDS</span></div><div class="tool-btn" onclick="toggleEq()"><div class="eq-bars" id="eqBars"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div></div>
 <div class="cover-flow" id="coverFlow"></div>
 <div class="player-bar">
 <div class="player-row">
 <div style="display:flex;gap:8px"><button class="ctrl-btn" onclick="prev()">⏮</button><button class="ctrl-btn play" id="playBtn" onclick="togglePlay()">▶</button><button class="ctrl-btn" onclick="next()">⏭</button></div>
-<div class="now-playing"><img id="npImg" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200"><div class="np-text"><h4 id="npTitle">SIMPLICITÉ - Afro</h4><p id="npArtist">By Molongi</p></div></div>
+<div class="now-playing"><img id="npImg" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200"><div style="flex:1;min-width:0"><h4 id="npTitle">SIMPLICITÉ - Afro</h4><p style="font-size:10px;opacity:0.7">By Molongi</p></div></div>
 <button class="tool-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
 </div>
 <div class="progress" onclick="seek(event)"><div class="progress-fill" id="prog"></div></div>
-<div class="volume-row"><button class="vol-btn" onclick="changeVol(-0.1)">−</button><input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="1" oninput="setVol(this.value)"><button class="vol-btn" onclick="changeVol(0.1)">+</button><span style="font-size:10px;opacity:0.6;min-width:30px;text-align:right" id="volText">100%</span></div>
+<div class="volume-row"><button class="tool-btn" onclick="changeVol(-0.1)">−</button><input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="1" oninput="setVol(this.value)"><button class="tool-btn" onclick="changeVol(0.1)">+</button><span style="font-size:10px;opacity:0.6;min-width:32px" id="volText">100%</span></div>
 </div>
 </div>
 
 <audio id="audio" src="simplicite-afro-01.mp3" preload="auto"></audio>
 <script>
 function checkPass(){const v=document.getElementById('passInput').value;const err=document.getElementById('lockError');if(v==='molongi2026'){document.getElementById('lockScreen').classList.add('hide');document.getElementById('playerScreen').classList.add('show');setTimeout(()=>{document.getElementById('audio').play().catch(()=>{});document.getElementById('playBtn').textContent='⏸';},600);}else{err.classList.add('show');setTimeout(()=>err.classList.remove('show'),2000);}}
-function toggleSearch(){document.getElementById('searchBox').classList.toggle('show');if(document.getElementById('searchBox').classList.contains('show'))document.getElementById('search').focus();}
 function toggleEq(){const eq=document.getElementById('eqBars');eq.classList.toggle('paused');const a=document.getElementById('audio');if(eq.classList.contains('paused')){a.pause();document.getElementById('playBtn').textContent='▶'}else{a.play();document.getElementById('playBtn').textContent='⏸'}}
 function toggleMute(){const a=document.getElementById('audio');a.muted=!a.muted;document.getElementById('muteBtn').textContent=a.muted?'🔇':'🔊';}
 function setVol(v){const a=document.getElementById('audio');a.volume=parseFloat(v);a.muted=false;document.getElementById('muteBtn').textContent='🔊';document.getElementById('volText').textContent=Math.round(v*100)+'%';}
 function changeVol(d){const s=document.getElementById('volSlider');let v=Math.min(1,Math.max(0,parseFloat(s.value)+d));s.value=v;setVol(v);}
 function seek(e){const rect=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-rect.left)/rect.width;const a=document.getElementById('audio');if(a.duration)a.currentTime=pct*a.duration;}
-const tracks=[{title:"SIMPLICITÉ - Afro",artist:"By Molongi • 01",cover:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",src:"simplicite-afro-01.mp3"},{title:"FREESTYLE KINSHASA",artist:"By Molongi",cover:"https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=500",src:"simplicite-afro-01.mp3"},{title:"AFRO DRILL BEAT",artist:"Beat • 2026",cover:"https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500",src:"simplicite-afro-01.mp3"}];
-let current=0;let filtered=[...tracks];
-function render(){const f=document.getElementById('coverFlow');f.innerHTML='';filtered.forEach((t,i)=>{const d=document.createElement('div');let c='card';if(i===current)c+=' active';else if(i===current-1)c+=' prev1';else if(i===current+1)c+=' next1';else{d.style.display='none'}d.className=c;d.innerHTML=`<img src="${t.cover}"><div class="card-info"><h3>${t.title}</h3><p>${t.artist}</p></div>`;d.onclick=()=>{current=i;updatePlayer();render();play()};f.appendChild(d)})}
-function updatePlayer(){document.getElementById('npTitle').textContent=filtered[current].title;document.getElementById('npArtist').textContent=filtered[current].artist;document.getElementById('npImg').src=filtered[current].cover;document.getElementById('audio').src=filtered[current].src;}
+const tracks=[{title:"SIMPLICITÉ - Afro",artist:"By Molongi",cover:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",src:"simplicite-afro-01.mp3"},{title:"FREESTYLE KINSHASA",artist:"By Molongi",cover:"https://images.unsplash.com/photo-1516450360452-9312abbf6f7e?w=500",src:"simplicite-afro-01.mp3"},{title:"AFRO DRILL BEAT",artist:"Beat 2026",cover:"https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=500",src:"simplicite-afro-01.mp3"}];
+let current=0;function render(){const f=document.getElementById('coverFlow');f.innerHTML='';tracks.forEach((t,i)=>{const d=document.createElement('div');let c='card';if(i===current)c+=' active';else if(i===current-1)c+=' prev1';else if(i===current+1)c+=' next1';else{d.style.display='none'}d.className=c;d.innerHTML=`<img src="${t.cover}"><div class="card-info"><h3>${t.title}</h3><p>${t.artist}</p></div>`;d.onclick=()=>{current=i;updatePlayer();render();play()};f.appendChild(d)})}
+function updatePlayer(){document.getElementById('npTitle').textContent=tracks[current].title;document.getElementById('npImg').src=tracks[current].cover;document.getElementById('audio').src=tracks[current].src;}
 function togglePlay(){const a=document.getElementById('audio');const eq=document.getElementById('eqBars');if(a.paused){a.play();document.getElementById('playBtn').textContent='⏸';eq.classList.remove('paused')}else{a.pause();document.getElementById('playBtn').textContent='▶';eq.classList.add('paused')}}
 function play(){document.getElementById('audio').play().catch(()=>{});document.getElementById('playBtn').textContent='⏸';document.getElementById('eqBars').classList.remove('paused')}
-function next(){current=(current+1)%filtered.length;updatePlayer();render();play()}
-function prev(){current=(current-1+filtered.length)%filtered.length;updatePlayer();render();play()}
-function filterTracks(){const q=document.getElementById('search').value.toLowerCase();filtered=tracks.filter(t=>t.title.toLowerCase().includes(q));current=0;if(filtered.length>0){updatePlayer();render();}}
+function next(){current=(current+1)%tracks.length;updatePlayer();render();play()}
+function prev(){current=(current-1+tracks.length)%tracks.length;updatePlayer();render();play()}
 const audio=document.getElementById('audio');audio.addEventListener('timeupdate',()=>{if(audio.duration)document.getElementById('prog').style.width=(audio.currentTime/audio.duration*100)+'%'});audio.addEventListener('ended',()=>next());
 render();
-if('serviceWorker' in navigator){window.addEventListener('load', ()=>{navigator.serviceWorker.register('./sw.js');});}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js');});}
 </script>
 </body>
 </html>
